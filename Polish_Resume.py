@@ -7,7 +7,7 @@ from langchain import PromptTemplate, OpenAI, LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_extraction_chain
 import fitz
-test = True
+test = False
 
 def read_resume(text_content):
     prompt_template = '''plrease reformat the following  text  to a resume in the following format:
@@ -87,7 +87,8 @@ def generate_refined_resume():
 
 
     
-
+if 'openAI_key' not in st.session_state:
+    st.session_state['openAI_key'] = ""
 
 if 'if_upload_clicked' not in st.session_state:
     st.session_state['if_upload_clicked'] = False
@@ -124,10 +125,12 @@ st.markdown("Step 4. Click 'Make Suggestions.' AI will provide you with suggesti
 st.markdown("Step 5. Click 'Auto Improve.' AI will polish your resume based on the suggestions.")
 st.markdown("Step 6. Click 'Download Resume.' to save your result")
 
-API_O = st.text_input('OPENAI_API_KEY', '')
+
+API_O = st.text_input('OPENAI_API_KEY', st.session_state['openAI_key'],type="password")
 # API_O = st.secrets["OPENAI_API_KEY"]
 MODEL = "gpt-3.5-turbo"
 if API_O:
+    st.session_state['openAI_key'] = API_O
     llm = ChatOpenAI(temperature=0, openai_api_key=API_O,
                  model_name=MODEL, verbose=False)
 else:
@@ -139,24 +142,25 @@ else:
 uploaded_file = st.file_uploader("Choose a file", type="pdf")
 
 if st.button("Read Resume"):
-    if uploaded_file is not None:
+    if uploaded_file is not None and API_O:
         st.session_state['if_upload_clicked'] = True
     else:
         st.info("please make sure you provide all info")
 if st.session_state['if_upload_clicked'] == True:
-    pdf_reader = PyPDF2.PdfReader(uploaded_file)
-    with open(os.path.join("tempDir", uploaded_file.name), "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    pdf_path = os.path.join("tempDir", uploaded_file.name)
+    if st.session_state['text_content']=="":
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        with open(os.path.join("tempDir", uploaded_file.name), "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        pdf_path = os.path.join("tempDir", uploaded_file.name)
 
-    doc = fitz.open(pdf_path)
-    text_content = ""
-    for page_num in range(len(doc)):
-        page = doc.load_page(page_num)
-        text_content += page.get_text()
+        doc = fitz.open(pdf_path)
+        text_content = ""
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            text_content += page.get_text()
 
-    st.session_state['text_content'] = text_content
-    st.session_state['if_resume_uploaded'] = True
+        st.session_state['text_content'] = text_content
+        st.session_state['if_resume_uploaded'] = True
 
 if st.session_state['if_resume_uploaded'] == True:
     with st.spinner(text='Reading In progress'):
@@ -164,7 +168,7 @@ if st.session_state['if_resume_uploaded'] == True:
             st.session_state['resume'] = "test resume"
 
         if st.session_state['resume'] == "":
-            result = read_resume(text_content)
+            result = read_resume(st.session_state['text_content'])
             st.session_state['resume'] = result
         st.success('Resume reading Completed')
         st.session_state['resume'] = st.text_area('Resume', st.session_state['resume'], 1000)

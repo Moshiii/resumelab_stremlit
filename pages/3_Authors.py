@@ -11,9 +11,9 @@ test = False
 
 st.markdown("Coding: Moshi, Carrie")
 st.markdown("Prompting: Moshi, Carrie")
-st.markdown("Special Thanks to Leona for UX Consulting")
 
+st.markdown("Special Thanks to Leona for UX Consulting")
 
 st.markdown("Moshi: wmswms938@gmail.com")
 st.markdown("Carrie: yanran2012@gmail.com")
-st.markdown("Leona: ")
+st.markdown("Leona: leona.huang.toronto@gmail.com")

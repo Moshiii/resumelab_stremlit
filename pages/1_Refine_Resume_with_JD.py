@@ -132,7 +132,7 @@ st.markdown("Step 5. Click 'Optimize based on JD.' AI will polish your resume ba
 st.markdown("Step 6. Click 'Download Resume.' to save your result")
 
 
-API_O = st.text_input('OPENAI_API_KEY', '')
+API_O = st.text_input('OPENAI_API_KEY', st.session_state['openAI_key'],type="password")
 # API_O = st.secrets["OPENAI_API_KEY"]
 MODEL = "gpt-3.5-turbo"
 if API_O:
@@ -152,20 +152,21 @@ if st.button("Read Resume and JD"):
         st.info("please make sure you provide all info")
 
 if st.session_state['page_jd_if_upload_clicked'] == True:
-    pdf_reader = PyPDF2.PdfReader(uploaded_file)
-    with open(os.path.join("tempDir", uploaded_file.name), "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    pdf_path = os.path.join("tempDir", uploaded_file.name)
+    if st.session_state['page_jd_text_content']=="":
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        with open(os.path.join("tempDir", uploaded_file.name), "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        pdf_path = os.path.join("tempDir", uploaded_file.name)
 
-    doc = fitz.open(pdf_path)
-    text_content = ""
-    for page_num in range(len(doc)):
-        page = doc.load_page(page_num)
-        text_content += page.get_text()
+        doc = fitz.open(pdf_path)
+        text_content = ""
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            text_content += page.get_text()
 
-    st.session_state['page_jd_text_content'] = text_content
-    st.session_state['page_jd_jd_text_area'] = jd_text_area
-    st.session_state['page_jd_if_resume_uploaded'] = True
+        st.session_state['page_jd_text_content'] = text_content
+        st.session_state['page_jd_jd_text_area'] = jd_text_area
+        st.session_state['page_jd_if_resume_uploaded'] = True
 
 if st.session_state['page_jd_if_resume_uploaded']:
     with st.spinner(text='Reading In progress'):
@@ -174,11 +175,11 @@ if st.session_state['page_jd_if_resume_uploaded']:
             st.session_state['page_jd_JD'] = "test JD"
 
         if st.session_state['page_jd_resume'] == "":
-            result = read_resume(text_content)
+            result = read_resume(st.session_state['page_jd_text_content'])
             st.session_state['page_jd_resume'] = result
 
         if st.session_state['page_jd_JD'] == "":
-            jd_result = read_jd(jd_text_area)
+            jd_result = read_jd(st.session_state['page_jd_jd_text_area'])
             st.session_state['page_jd_JD'] = jd_result
         
         st.success('Resume reading Completed')

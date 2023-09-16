@@ -93,7 +93,7 @@ st.markdown("Step 3. Click 'Read JD.' AI will parse JD to text, and you may edit
 st.markdown("Step 5. Click 'Generate Cover Letter.' AI will Generate Cover Letter based on the JD.")
 st.markdown("Step 6. Click 'Download Cover Letter.' to save your result")
 
-API_O = st.text_input('OPENAI_API_KEY', '')
+API_O = st.text_input('OPENAI_API_KEY', st.session_state['openAI_key'],type="password")
 # API_O = st.secrets["OPENAI_API_KEY"]
 MODEL = "gpt-3.5-turbo"
 if API_O:
@@ -112,9 +112,9 @@ if st.button("Read JD"):
         st.info("please make sure you provide all info")
 
 if st.session_state['page_jd_if_upload_clicked'] == True:
-
-    st.session_state['page_jd_jd_text_area'] = jd_text_area
-    st.session_state['page_jd_if_resume_uploaded'] = True
+    if st.session_state['page_jd_jd_text_area']=="":
+        st.session_state['page_jd_jd_text_area'] = jd_text_area
+        st.session_state['page_jd_if_resume_uploaded'] = True
 
 if st.session_state['page_jd_if_resume_uploaded']:
     with st.spinner(text='Reading In progress'):
@@ -123,7 +123,7 @@ if st.session_state['page_jd_if_resume_uploaded']:
             st.session_state['page_jd_JD'] = "test JD"
 
         if st.session_state['page_jd_JD'] == "":
-            jd_result = read_jd(jd_text_area)
+            jd_result = read_jd(st.session_state['page_jd_jd_text_area'])
             st.session_state['page_jd_JD'] = jd_result
 
         st.success('JD reading Completed')
