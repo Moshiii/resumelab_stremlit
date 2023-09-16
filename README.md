@@ -6,14 +6,16 @@ streamlit run .\Polish_Resume.py
 ## Motivation:
 
 
-In a competitive job market, time is of the essence, and the quality of your application materials can make all the difference. We built this app to save you time and offer the guidance you need to succeed in your job search journey. Welcome to a more efficient and effective way of securing your dream job with ease.
+In a competitive job market, time is of the essence, and the quality of your application materials can make all the difference. 
+We built this app to save you time and offer the guidance you need to succeed in your job search journey. 
+Welcome to a more efficient and effective way of securing your dream job with ease.
 
 
-Why did we build this app?
+### Why did we build this app?
 
 We built this app because we understand the frustration and time constraints job seekers face when applying for positions. Crafting a tailored resume and cover letter for each job application can be incredibly time-consuming. We recognized the need for a solution that simplifies this process and empowers individuals to present their best selves to potential employers.
 
-What problem are we solving?
+### What problem are we solving?
 
 Our app is the answer to two common job search challenges:
 
